@@ -18,11 +18,14 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy project files
-COPY . .
+# Copy composer files first (IMPORTANT)
+COPY composer.json composer.lock ./
 
-# Install PHP dependencies (INI YANG PENTING)
+# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
+
+# Copy the rest of the application
+COPY . .
 
 # Set Apache document root to /public
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
