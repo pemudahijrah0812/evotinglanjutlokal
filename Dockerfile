@@ -12,11 +12,17 @@ RUN apt-get update && apt-get install -y \
     zip \
     && docker-php-ext-install intl pdo pdo_mysql
 
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
 # Set working directory
 WORKDIR /var/www/html
 
-# Copy project
-COPY . /var/www/html
+# Copy project files
+COPY . .
+
+# Install PHP dependencies (INI YANG PENTING)
+RUN composer install --no-dev --optimize-autoloader
 
 # Set Apache document root to /public
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
